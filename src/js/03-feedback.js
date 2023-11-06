@@ -13,13 +13,13 @@ const serializedData = {
   },
 
   sendDataLocal() {
-    dataForSentJSON = JSON.stringify(this.data);
+    const dataForSentJSON = JSON.stringify(this.data);
     localStorage.setItem('feedback-form-state', dataForSentJSON);
   },
 
   receiveDataLocal() {
-    dataReceivedJSON = localStorage.getItem('feedback-form-state');
-    dataReceivedObj = JSON.parse(dataReceivedJSON);
+    const dataReceivedJSON = localStorage.getItem('feedback-form-state');
+    const dataReceivedObj = JSON.parse(dataReceivedJSON);
     return dataReceivedObj;
   },
 };
