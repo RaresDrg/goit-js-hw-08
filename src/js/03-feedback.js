@@ -1,55 +1,73 @@
+import throttle from 'lodash.throttle';
+
 const emailInput = document.querySelector('[name="email"]');
 const messageInput = document.querySelector('[name="message"]');
+const formEl = document.querySelector('.feedback-form');
 
+
+// Serialized Data obj //
 const serializedData = {
   data: {
-    email: '',
-    message: '',
+    email: emailInput.value,
+    message: messageInput.value,
   },
 
-  sentDataLocal() {
+  sendDataLocal() {
     dataForSentJSON = JSON.stringify(this.data);
     localStorage.setItem('feedback-form-state', dataForSentJSON);
   },
 
   receiveDataLocal() {
     dataReceivedJSON = localStorage.getItem('feedback-form-state');
-    // dataReceivedObj = JSON.parse(dataReceivedJSON);
-    try {
-      dataReceivedObj = JSON.parse(dataReceivedJSON);
-    } catch (error) {
-      console.log(error);
-    }
-
-    // console.log(dataReceivedObj);
+    dataReceivedObj = JSON.parse(dataReceivedJSON);
     return dataReceivedObj;
   },
 };
 
+
 // Input Events //
+formEl.addEventListener(
+  'input',
+  throttle(({ target }) => {
+    if (target === emailInput) {
+      serializedData.data.email = target.value;
+      serializedData.sendDataLocal();
+      return;
+    }
+    if (target === messageInput) {
+      serializedData.data.message = target.value;
+      serializedData.sendDataLocal();
+      return;
+    }
+  }, 500)
+);
 
-emailInput.addEventListener('input', ({ target }) => {
-  serializedData.data.email = target.value;
-  serializedData.sentDataLocal();
-});
 
-messageInput.addEventListener('input', ({ target }) => {
-  serializedData.data.message = target.value;
-  serializedData.sentDataLocal();
-});
-
-// Page reload event //
-
-window.addEventListener('DOMContentLoaded', fillInputFields);
-
-function fillInputFields() {
+// Reload page event //
+window.addEventListener('DOMContentLoaded', () => {
   const dataSaved = serializedData.receiveDataLocal();
-
-  if (dataSaved.email) {
+  if (dataSaved) {
     emailInput.value = dataSaved.email;
-  }
-
-  if (dataSaved.message) {
     messageInput.value = dataSaved.message;
   }
-}
+});
+
+
+// Submit Event //
+formEl.addEventListener('submit', event => {
+  event.preventDefault();
+
+  if (!emailInput.value) {
+    alert('Completati campul email');
+    return;
+  }
+  if (!messageInput.value) {
+    alert('Completati campul message');
+    return;
+  }
+
+  alert('Formularul a fost trimis');
+  console.log(serializedData.receiveDataLocal());
+  localStorage.removeItem('feedback-form-state');
+  formEl.reset();
+});
