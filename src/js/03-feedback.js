@@ -5,52 +5,35 @@ const messageInput = document.querySelector('[name="message"]');
 const formEl = document.querySelector('.feedback-form');
 
 
-// Serialized Data obj //
-const serializedData = {
-  data: {
-    email: emailInput.value,
-    message: messageInput.value,
-  },
-
-  sendDataLocal() {
-    const dataForSentJSON = JSON.stringify(this.data);
-    localStorage.setItem('feedback-form-state', dataForSentJSON);
-  },
-
-  receiveDataLocal() {
-    const dataReceivedJSON = localStorage.getItem('feedback-form-state');
-    const dataReceivedObj = JSON.parse(dataReceivedJSON);
-    return dataReceivedObj;
-  },
-};
-
-
-// Input Events //
+// Input Event //
 formEl.addEventListener(
   'input',
-  throttle(({ target }) => {
-    if (target === emailInput) {
-      serializedData.data.email = target.value;
-      serializedData.sendDataLocal();
-      return;
-    }
-    if (target === messageInput) {
-      serializedData.data.message = target.value;
-      serializedData.sendDataLocal();
-      return;
-    }
+  throttle(() => {
+    const dataObj = {
+      email: emailInput.value,
+      message: messageInput.value,
+    };
+
+    localStorage.setItem('feedback-form-state', JSON.stringify(dataObj));
   }, 500)
 );
 
 
 // Reload page event //
 window.addEventListener('DOMContentLoaded', () => {
-  const dataSaved = serializedData.receiveDataLocal();
+  const dataSaved = receiveDataFromLocal();
   if (dataSaved) {
     emailInput.value = dataSaved.email;
     messageInput.value = dataSaved.message;
   }
 });
+
+// Receive data function //
+function receiveDataFromLocal() {
+  const dataReceivedJSON = localStorage.getItem('feedback-form-state');
+  const dataReceivedObj = JSON.parse(dataReceivedJSON);
+  return dataReceivedObj;
+}
 
 
 // Submit Event //
@@ -67,7 +50,7 @@ formEl.addEventListener('submit', event => {
   }
 
   alert('Formularul a fost trimis');
-  console.log(serializedData.receiveDataLocal());
+  console.log(receiveDataFromLocal());
   localStorage.removeItem('feedback-form-state');
   formEl.reset();
 });
