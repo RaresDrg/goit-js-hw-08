@@ -4,7 +4,6 @@ const emailInput = document.querySelector('[name="email"]');
 const messageInput = document.querySelector('[name="message"]');
 const formEl = document.querySelector('.feedback-form');
 
-
 // Input Event //
 formEl.addEventListener(
   'input',
@@ -17,7 +16,6 @@ formEl.addEventListener(
     localStorage.setItem('feedback-form-state', JSON.stringify(dataObj));
   }, 500)
 );
-
 
 // Reload page event //
 window.addEventListener('DOMContentLoaded', () => {
@@ -34,7 +32,6 @@ function receiveDataFromLocal() {
   const dataReceivedObj = JSON.parse(dataReceivedJSON);
   return dataReceivedObj;
 }
-
 
 // Submit Event //
 formEl.addEventListener('submit', event => {
